@@ -214,6 +214,16 @@ func (t *sseClientTransport) handleSSEEvent(event, data string) {
 			t.logger.Errorf("Error parsing endpoint URL: %v", err)
 			return
 		}
+
+		// Append query parameters from serverURL to messageEndpoint
+		if t.serverURL.RawQuery != "" {
+			if endpoint.RawQuery != "" {
+				endpoint.RawQuery = endpoint.RawQuery + "&" + t.serverURL.RawQuery
+			} else {
+				endpoint.RawQuery = t.serverURL.RawQuery
+			}
+		}
+
 		t.logger.Debugf("Received endpoint: %s", endpoint.String())
 		t.messageEndpoint = endpoint
 		select {
